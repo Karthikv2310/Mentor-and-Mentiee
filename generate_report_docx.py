@@ -544,12 +544,12 @@ def create_report():
     tbl_sig = doc.add_table(rows=3, cols=2)
     tbl_sig.alignment = WD_TABLE_ALIGNMENT.CENTER
     s_rows = tbl_sig.rows
-    s_rows[0].cells[0].text = "Student Name: Nihar K T"
-    s_rows[0].cells[1].text = "Institutional Branch: Computer Science & Engineering"
-    s_rows[1].cells[0].text = "University Seat Number (USN): NNM23IS109"
+    s_rows[0].cells[0].text = "Student Name: Karthik V"
+    s_rows[0].cells[1].text = "Institutional Branch: Department of Information Science & Engineering"
+    s_rows[1].cells[0].text = "University Seat Number (USN): NNM23IS086"
     s_rows[1].cells[1].text = "Institution: NMAM Institute of Technology, Nitte"
     s_rows[2].cells[0].text = "Date of Submission: October 28, 2026"
-    s_rows[2].cells[1].text = "Digital Signature: Nihar K T"
+    s_rows[2].cells[1].text = "Digital Signature: Karthik V"
 
     for r in s_rows:
         for c in r.cells:

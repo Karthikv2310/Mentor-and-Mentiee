@@ -296,9 +296,9 @@ In adherence to academic integrity and ethical engineering guidelines, artificia
 
 | Field | Detail |
 | :--- | :--- |
-| **Student Name** | Nihar K T |
-| **University Seat Number (USN)** | NNM23IS109 |
-| **Institutional Branch** | Department of Computer Science & Engineering |
+| **Student Name** |Karthik V|
+| **University Seat Number (USN)** | NNM23IS086 |
+| **Institutional Branch** | Department of Information Science & Engineering |
 | **Institution** | NMAM Institute of Technology, Nitte |
 | **Date of Submission** | October 28, 2026 |
-| **Digital Signature** | *Nihar K T* |
+| **Digital Signature** | Karthik V |
