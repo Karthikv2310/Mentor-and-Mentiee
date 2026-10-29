@@ -1,8 +1,6 @@
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import { Pool } from "pg";
-import path from "path";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -10,29 +8,21 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient(): PrismaClient {
-  const dbUrl = process.env.DATABASE_URL || "";
+  const dbUrl =
+    process.env.DATABASE_URL ||
+    "postgresql://postgres:dummy@localhost:5432/postgres";
 
-  // If a PostgreSQL / Supabase connection string is provided
-  if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
-    const pool =
-      globalForPrisma.pool ??
-      new Pool({
-        connectionString: dbUrl,
-        ssl: { rejectUnauthorized: false }, // Required for Supabase pooling & SSL
-      });
-    if (process.env.NODE_ENV !== "production") globalForPrisma.pool = pool;
+  const isSupabase = dbUrl.includes("supabase") || dbUrl.includes("pooler");
 
-    const adapter = new PrismaPg(pool);
-    return new PrismaClient({
-      adapter,
-      log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
+  const pool =
+    globalForPrisma.pool ??
+    new Pool({
+      connectionString: dbUrl,
+      ssl: isSupabase ? { rejectUnauthorized: false } : undefined,
     });
-  }
+  if (process.env.NODE_ENV !== "production") globalForPrisma.pool = pool;
 
-  // Fallback to local SQLite BetterSqlite3 adapter
-  const dbPath = path.resolve(process.cwd(), "dev.db");
-  const url = `file:${dbPath}`;
-  const adapter = new PrismaBetterSqlite3({ url });
+  const adapter = new PrismaPg(pool);
   return new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
