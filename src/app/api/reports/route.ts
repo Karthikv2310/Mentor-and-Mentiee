@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
   });
   const maxCapacity = capSetting ? parseInt(capSetting.settingValue, 10) : 25;
 
-  const workloadSummary = facultyWorkload.map((f) => ({
+  const workloadSummary = facultyWorkload.map((f: any) => ({
     id: f.id,
     name: `${f.prefix || ""} ${f.fullName}`.trim(),
     department: f.department.code,

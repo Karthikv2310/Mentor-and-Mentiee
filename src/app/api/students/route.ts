@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Execute creation in a transaction
-    const student = await prisma.$transaction(async (tx) => {
+    const student = await prisma.$transaction(async (tx: any) => {
       const newStudent = await tx.studentProfile.create({
         data: {
           institutionalId: data.institutionalId.trim().toUpperCase(),

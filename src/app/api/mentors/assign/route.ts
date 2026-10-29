@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     const effectiveDate = effectiveStartDate ? new Date(effectiveStartDate) : new Date();
 
     // Execute assignments transactionally
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       for (const studentId of studentIds) {
         // Find any existing active assignment with this roleType and end it gracefully
         const existingAssignment = await tx.mentorAssignment.findFirst({

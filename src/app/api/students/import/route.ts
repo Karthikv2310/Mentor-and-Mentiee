@@ -69,20 +69,20 @@ export async function POST(req: NextRequest) {
 
     // Fetch reference data for validation
     const departments = await prisma.department.findMany();
-    const deptMapByCode = new Map(departments.map((d) => [d.code.toUpperCase(), d]));
+    const deptMapByCode = new Map<string, any>(departments.map((d: any) => [d.code.toUpperCase(), d]));
     const programmes = await prisma.programme.findMany();
-    const progMapByCode = new Map(programmes.map((p) => [p.code.toUpperCase(), p]));
+    const progMapByCode = new Map<string, any>(programmes.map((p: any) => [p.code.toUpperCase(), p]));
 
     // Check existing institutional IDs in database
     const allUSNsInFile = rows
-      .map((r) => (r.institutionalId || r.USN || r.RegistrationNo || "").trim().toUpperCase())
+      .map((r: any) => (r.institutionalId || r.USN || r.RegistrationNo || "").trim().toUpperCase())
       .filter(Boolean);
 
     const existingStudents = await prisma.studentProfile.findMany({
       where: { institutionalId: { in: allUSNsInFile } },
       select: { institutionalId: true, fullName: true, departmentId: true },
     });
-    const existingUSNMap = new Map(existingStudents.map((s) => [s.institutionalId, s]));
+    const existingUSNMap = new Map<string, any>(existingStudents.map((s: any) => [s.institutionalId, s]));
 
     // Validate rows and detect intra-file duplicates
     const seenUSNsInFile = new Set<string>();
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
         errors.push("Full Name is required (minimum 2 characters).");
       }
 
-      const dept = deptMapByCode.get(deptCode);
+      const dept: any = deptMapByCode.get(deptCode);
       if (!dept) {
         errors.push(`Unknown department code '${deptCode}'. Valid: ${Array.from(deptMapByCode.keys()).join(", ")}`);
       } else {
@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      const prog = progMapByCode.get(progCode);
+      const prog: any = progMapByCode.get(progCode);
       if (!prog && dept) {
         errors.push(`Unknown programme code '${progCode}'.`);
       }
@@ -218,7 +218,7 @@ export async function POST(req: NextRequest) {
 
     const currentAY = await prisma.academicYear.findFirst({ where: { isCurrent: true } });
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       for (const row of validationResults) {
         if (!row.isValid) {
           // Log row-level error

@@ -45,7 +45,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const isStudent = auth.user.role === "STUDENT";
   if (isStudent) {
     const isParticipant = meeting.participants.some(
-      (p) => p.student.userId === auth.user.id
+      (p: any) => p.student.userId === auth.user.id
     );
     if (!isParticipant) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 
   // Filter notes by visibility level
-  const filteredNotes = meeting.notes.filter((note) => {
+  const filteredNotes = meeting.notes.filter((note: any) => {
     if (isStudent) return note.visibilityLevel === "STUDENT_VISIBLE";
     if (note.visibilityLevel === "RESTRICTED_COUNSELLING") return note.authorId === auth.user.id;
     return true;
@@ -84,7 +84,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const body = await req.json();
     const { status, cancellationReason, attendanceUpdates, newNote } = body;
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // 1. Update meeting status if provided
       if (status) {
         await tx.meeting.update({

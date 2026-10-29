@@ -67,11 +67,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const isStudent = auth.user.role === "STUDENT";
   const sanitizedStudent = {
     ...student,
-    meetingParticipants: student.meetingParticipants.map((mp) => ({
+    meetingParticipants: student.meetingParticipants.map((mp: any) => ({
       ...mp,
       meeting: {
         ...mp.meeting,
-        notes: mp.meeting.notes.filter((note) => {
+        notes: mp.meeting.notes.filter((note: any) => {
           if (isStudent) {
             return note.visibilityLevel === "STUDENT_VISIBLE";
           }

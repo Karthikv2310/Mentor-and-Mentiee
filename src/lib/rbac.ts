@@ -55,7 +55,7 @@ export async function canAccessStudent(studentId: string, currentUser: any): Pro
     // Check if mentor faculty record matches current teacher
     const teacherFacultyId = currentUser.facultyProfile?.id;
     if (teacherFacultyId) {
-      const isAssigned = student.mentorAssignments.some((a) => a.mentorFacultyId === teacherFacultyId);
+      const isAssigned = student.mentorAssignments.some((a: any) => a.mentorFacultyId === teacherFacultyId);
       if (isAssigned) return true;
     }
     // Teachers can also view mentees created by them pending approval

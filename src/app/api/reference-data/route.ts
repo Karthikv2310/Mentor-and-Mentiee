@@ -24,6 +24,6 @@ export async function GET() {
     departments,
     programmes,
     academicYears,
-    settings: Object.fromEntries(settings.map((s) => [s.settingKey, s.settingValue])),
+    settings: Object.fromEntries(settings.map((s: any) => [s.settingKey, s.settingValue])),
   });
 }

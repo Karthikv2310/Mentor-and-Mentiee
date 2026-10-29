@@ -76,9 +76,9 @@ export async function GET(req: NextRequest) {
 
   // Filter notes by visibility
   const isStudent = auth.user.role === "STUDENT";
-  const sanitized = meetings.map((m) => ({
+  const sanitized = meetings.map((m: any) => ({
     ...m,
-    notes: m.notes.filter((n) => {
+    notes: m.notes.filter((n: any) => {
       if (isStudent) return n.visibilityLevel === "STUDENT_VISIBLE";
       if (n.visibilityLevel === "RESTRICTED_COUNSELLING") return n.authorId === auth.user.id;
       return true;
@@ -161,7 +161,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const meeting = await prisma.$transaction(async (tx) => {
+    const meeting = await prisma.$transaction(async (tx: any) => {
       const newMeeting = await tx.meeting.create({
         data: {
           title: data.title,
