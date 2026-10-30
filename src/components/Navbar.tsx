@@ -154,11 +154,18 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center gap-2">
                 <Link
-                  href="/login"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-md text-xs font-medium bg-rose-800 hover:bg-rose-700 text-white shadow transition"
+                  href="/login?mode=signin"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
                 >
                   <LogIn className="w-3.5 h-3.5" />
-                  <span>Portal Login</span>
+                  <span>Sign In</span>
+                </Link>
+                <Link
+                  href="/login?mode=register"
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold bg-rose-800 hover:bg-rose-700 text-white shadow transition"
+                >
+                  <GraduationCap className="w-3.5 h-3.5" />
+                  <span>Register</span>
                 </Link>
               </div>
             )}
@@ -212,13 +219,22 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block text-center w-full py-2 bg-rose-800 text-white rounded text-sm font-medium"
-              >
-                Sign In to Portal
-              </Link>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <Link
+                  href="/login?mode=signin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-center py-2 bg-slate-800 text-white rounded text-xs font-medium border border-slate-700"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/login?mode=register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-center py-2 bg-rose-800 text-white rounded text-xs font-semibold"
+                >
+                  Create Account
+                </Link>
+              </div>
             )}
           </div>
         </div>

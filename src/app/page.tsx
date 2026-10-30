@@ -57,11 +57,19 @@ export default function HomePage() {
 
               <div className="flex flex-wrap items-center gap-4 pt-2">
                 <Link
-                  href="/login"
+                  href="/login?mode=signin"
                   className="px-6 py-3 rounded-lg bg-rose-700 hover:bg-rose-600 text-white font-semibold text-sm shadow-lg shadow-rose-950/50 flex items-center gap-2 transition"
                 >
                   <span>Sign In to Portal</span>
                   <ArrowRight className="w-4 h-4" />
+                </Link>
+
+                <Link
+                  href="/login?mode=register"
+                  className="px-5 py-3 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white font-semibold text-sm shadow-lg flex items-center gap-2 transition"
+                >
+                  <GraduationCap className="w-4 h-4" />
+                  <span>Create Student Account</span>
                 </Link>
 
                 <Link
@@ -351,12 +359,19 @@ export default function HomePage() {
           <p className="text-slate-300 text-sm">
             Sign in with your verified institutional email or test with pre-seeded demonstration credentials from the top bar.
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-4">
             <Link
-              href="/login"
+              href="/login?mode=signin"
               className="px-6 py-3 rounded-lg bg-rose-700 hover:bg-rose-600 text-white font-semibold text-sm shadow-lg transition"
             >
               Sign In to Your Account
+            </Link>
+            <Link
+              href="/login?mode=register"
+              className="px-6 py-3 rounded-lg bg-white hover:bg-slate-100 text-rose-950 font-semibold text-sm shadow-lg transition flex items-center gap-2"
+            >
+              <GraduationCap className="w-4 h-4 text-rose-900" />
+              <span>Create Student Account</span>
             </Link>
           </div>
         </div>

@@ -3,11 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id                 String              @id @default(cuid())
+  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
   email              String              @unique
   passwordHash       String
   role               String              // "ADMIN" | "HOD" | "TEACHER" | "STUDENT"
@@ -17,8 +18,8 @@ model User {
   departmentScopeId  String?             // For HOD / Teachers assigned to a specific department
   isActive           Boolean             @default(true)
   mustChangePassword Boolean             @default(false)
-  invitationToken    String?             @unique
-  resetToken         String?             @unique
+  invitationToken    String?
+  resetToken         String?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 
@@ -33,7 +34,7 @@ model User {
 }
 
 model Department {
-  id             String           @id @default(cuid())
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
   code           String           @unique // "CSE", "ISE", "ECE", "CIVIL", "MECH", "AI_DS", etc.
   name           String
   description    String?
@@ -49,8 +50,8 @@ model Department {
 }
 
 model Programme {
-  id             String           @id @default(cuid())
-  departmentId   String
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  departmentId   String           @db.ObjectId
   code           String           @unique // "BTECH_CSE", "BTECH_ISE", "MTECH_CSE", "MCA"
   name           String
   degreeLevel    String           // "UG", "PG", "PHD"
@@ -64,7 +65,7 @@ model Programme {
 }
 
 model AcademicYear {
-  id             String           @id @default(cuid())
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
   name           String           @unique // "2024-2025", "2025-2026", "2026-2027"
   isCurrent      Boolean          @default(false)
   startDate      DateTime
@@ -76,9 +77,9 @@ model AcademicYear {
 }
 
 model BatchSection {
-  id             String           @id @default(cuid())
-  programmeId    String
-  academicYearId String
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  programmeId    String           @db.ObjectId
+  academicYearId String           @db.ObjectId
   admissionYear  Int              // e.g. 2023, 2024
   semester       Int              // 1 to 8
   sectionName    String           // "A", "B", "C", "D"
@@ -92,14 +93,14 @@ model BatchSection {
 }
 
 model FacultyProfile {
-  id                 String             @id @default(cuid())
-  userId             String?            @unique // Nullable until login account is approved/activated
-  stagingRefId       String?            @unique // e.g., "FAC52", "FAC62" from official nitte.edu.in
+  id                 String             @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String?            @unique @db.ObjectId // Nullable until login account is approved/activated
+  stagingRefId       String?            // e.g., "FAC52", "FAC62" from official nitte.edu.in
   employeeCode       String             @unique
   prefix             String?            // "Dr.", "Prof.", "Mr.", "Ms."
   fullName           String
   designation        String             // "Principal & Professor", "Professor & Head", "Associate Professor", etc.
-  departmentId       String
+  departmentId       String             @db.ObjectId
   officialProfileUrl String?            // Source URL on nitte.edu.in
   photoUrl           String?
   approvalStatus     String             @default("STAGED") // "STAGED", "APPROVED", "REJECTED", "ARCHIVED"
@@ -116,13 +117,13 @@ model FacultyProfile {
 }
 
 model StudentProfile {
-  id                  String             @id @default(cuid())
-  userId              String?            @unique // Nullable until student portal account invited/activated
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  userId              String?            @unique @db.ObjectId // Nullable until student portal account invited/activated
   institutionalId     String             @unique // USN or NDU Registration No (e.g., 4NM22CS001, NNM23CS012)
   fullName            String
-  institutionalEmail  String?            @unique
-  departmentId        String
-  programmeId         String
+  institutionalEmail  String?
+  departmentId        String             @db.ObjectId
+  programmeId         String             @db.ObjectId
   admissionYear       Int
   currentSemester     Int
   section             String             // "A", "B", "C"
@@ -144,9 +145,9 @@ model StudentProfile {
 }
 
 model StudentProgression {
-  id                     String        @id @default(cuid())
-  studentId              String
-  academicYearId         String
+  id                     String        @id @default(auto()) @map("_id") @db.ObjectId
+  studentId              String        @db.ObjectId
+  academicYearId         String        @db.ObjectId
   semester               Int
   section                String
   sgpa                   Float?
@@ -164,15 +165,15 @@ model StudentProgression {
 }
 
 model MentorAssignment {
-  id                 String         @id @default(cuid())
-  studentId          String
-  mentorFacultyId    String
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId          String         @db.ObjectId
+  mentorFacultyId    String         @db.ObjectId
   roleType           String         @default("CLASS_PROCTOR") // "CLASS_PROCTOR" | "FACULTY_ADVISOR"
   status             String         @default("ACTIVE")        // "ACTIVE" | "TRANSFERRED" | "ENDED"
   effectiveStartDate DateTime       @default(now())
   effectiveEndDate   DateTime?
   reassignmentReason String?
-  assignedById       String?
+  assignedById       String?        @db.ObjectId
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
 
@@ -182,7 +183,7 @@ model MentorAssignment {
 }
 
 model Meeting {
-  id                 String               @id @default(cuid())
+  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
   title              String
   description        String?
   sessionType        String               @default("ONE_ON_ONE") // "ONE_ON_ONE" | "GROUP"
@@ -191,7 +192,7 @@ model Meeting {
   durationMinutes    Int                  @default(30)
   locationOrLink     String               @default("Department Mentor Chamber")
   status             String               @default("CONFIRMED") // "REQUESTED", "CONFIRMED", "COMPLETED", "CANCELLED", "NO_SHOW"
-  createdById        String
+  createdById        String               @db.ObjectId
   cancellationReason String?
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
@@ -203,9 +204,9 @@ model Meeting {
 }
 
 model MeetingParticipant {
-  id                 String         @id @default(cuid())
-  meetingId          String
-  studentId          String
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  meetingId          String         @db.ObjectId
+  studentId          String         @db.ObjectId
   attendanceStatus   String         @default("PRESENT") // "PRESENT", "ABSENT", "EXCUSED"
   feedbackNotes      String?
   createdAt          DateTime       @default(now())
@@ -217,9 +218,9 @@ model MeetingParticipant {
 }
 
 model MeetingNote {
-  id                 String         @id @default(cuid())
-  meetingId          String
-  authorId           String
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  meetingId          String         @db.ObjectId
+  authorId           String         @db.ObjectId
   visibilityLevel    String         // "STUDENT_VISIBLE" | "MENTOR_ONLY" | "RESTRICTED_COUNSELLING"
   noteContent        String
   revisionHistoryJson String?       // Array of previous revisions with timestamps
@@ -231,9 +232,9 @@ model MeetingNote {
 }
 
 model ActionItem {
-  id                 String         @id @default(cuid())
-  studentId          String
-  meetingId          String?
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId          String         @db.ObjectId
+  meetingId          String?        @db.ObjectId
   title              String
   description        String?
   assignedToRole     String         @default("STUDENT") // "STUDENT" | "MENTOR"
@@ -250,9 +251,9 @@ model ActionItem {
 }
 
 model AppointmentRequest {
-  id                 String         @id @default(cuid())
-  studentId          String
-  mentorFacultyId    String
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  studentId          String         @db.ObjectId
+  mentorFacultyId    String         @db.ObjectId
   requestedDate      DateTime
   preferredTimeSlot  String         // e.g. "10:30 AM - 11:00 AM"
   agenda             String
@@ -266,8 +267,8 @@ model AppointmentRequest {
 }
 
 model Notification {
-  id                 String         @id @default(cuid())
-  userId             String
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String         @db.ObjectId
   title              String
   message            String
   linkUrl            String?
@@ -278,11 +279,11 @@ model Notification {
 }
 
 model ImportJob {
-  id                 String          @id @default(cuid())
-  importedById       String
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
+  importedById       String          @db.ObjectId
   fileName           String
   fileType           String          // "CSV" | "XLSX"
-  departmentId       String
+  departmentId       String          @db.ObjectId
   totalRows          Int             @default(0)
   successfulRows     Int             @default(0)
   failedRows         Int             @default(0)
@@ -295,8 +296,8 @@ model ImportJob {
 }
 
 model ImportRowError {
-  id                 String          @id @default(cuid())
-  importJobId        String
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
+  importJobId        String          @db.ObjectId
   rowNumber          Int
   rawDataJson        String
   fieldName          String?
@@ -306,8 +307,8 @@ model ImportRowError {
 }
 
 model AuditEvent {
-  id                 String          @id @default(cuid())
-  actorId            String?
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
+  actorId            String?         @db.ObjectId
   actorEmail         String?
   actorRole          String?
   action             String          // "STUDENT_CREATED", "BULK_IMPORT", "MENTOR_ASSIGNED", "NOTE_CREATED", "LOGIN_SUCCESS", "LOGIN_FAILED", "STAGING_APPROVED"
@@ -322,7 +323,7 @@ model AuditEvent {
 }
 
 model SourceVerificationRecord {
-  id                 String          @id @default(cuid())
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
   entityType         String          // "INSTITUTION", "DEPARTMENT", "FACULTY", "MENTORING_POLICY"
   entityIdentifier   String          // e.g. "FAC52", "DEPT_CSE", "MENTORING_SCHEME"
   verifiedField      String          // e.g. "DESIGNATION", "NAME", "PROCTOR_STRUCTURE"
@@ -335,7 +336,7 @@ model SourceVerificationRecord {
 }
 
 model InstitutionalSetting {
-  id                 String          @id @default(cuid())
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
   settingKey         String          @unique // e.g. "STUDENT_ID_LABEL", "MAX_MENTEES_PER_MENTOR", "PROCTOR_CAPACITY", "DEFAULT_TIMEZONE"
   settingValue       String
   description        String?
